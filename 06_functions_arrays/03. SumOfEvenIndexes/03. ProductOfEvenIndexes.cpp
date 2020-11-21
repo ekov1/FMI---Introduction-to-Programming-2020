@@ -11,7 +11,7 @@ int main()
 	int arr[1024];
 
 	ReadInput(arr, n);
-	int product =GetProduct(arr, n);
+	int product = GetProduct(arr, n);
 	std::cout << "product = " << product << std::endl;
 }
 

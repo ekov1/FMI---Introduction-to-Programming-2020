@@ -1,9 +1,26 @@
-// 06. CountOnesZeros.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+﻿// Напишете програма, която да преброи колко единици и нули
+// има в двоичното представяне на дадено цяло число.
 
 #include <iostream>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	unsigned n, remainder;
+	std::cin >> n;
+
+	short i = 31;
+	short bit, ones = 0, zeros = 0;
+	while (i >= 0)
+	{
+		bit = (n & (1 << i)) >> i;
+		if (bit == 1) {
+			ones++;
+		}
+		else
+		{
+			zeros++;
+		}
+		i--;
+	}
+	std::cout << "ones = " << ones << " zeros = " << zeros;
 }

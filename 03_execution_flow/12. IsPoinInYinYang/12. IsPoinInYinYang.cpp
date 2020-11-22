@@ -22,6 +22,9 @@ int main()
 			std::cout << "point is in black space";
 		}
 	}
+
+	// 1ви квадрант
+
 }
 
 

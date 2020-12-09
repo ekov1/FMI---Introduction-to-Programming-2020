@@ -17,18 +17,53 @@
 //     Обяснение : Купуваме в ден 1(price = 1) и продаваме в ден 5(price = 5), profit = 5 - 1 = 4
 #include <iostream>
 
+int const MAX_SIZE = 1024;
+
+void ReadArr(double arr[], int arrSize);
+
 int main()
 {
-    std::cout << "Hello World!\n";
+	double arr[MAX_SIZE];
+	int arrSize;
+	std::cin >> arrSize;
+	ReadArr(arr, arrSize);
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void GetProfit(double arr[], int arrSize) {
+	double profit = 0;
+	double firstElementSeq = arr[0];
+	int firstElemntIndex = 0;
+	double lastElementSeq;
+	int lastElemntIndex = 0;
+	int seqSize = 0;
+	double currentElement = arr[0];
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+	for (size_t i = 1; i < arrSize; i++)
+	{
+		if (arr[i] < arr[i - 1])
+		{
+			lastElementSeq = arr[i];
+			lastElemntIndex = i;
+
+			if (seqSize > 1)
+			{
+				double seqProfit = lastElementSeq - firstElementSeq;
+				double investmentValue = profit - firstElementSeq;
+				if (abs(investmentValue)  > seqProfit)
+				{
+
+				}
+			}
+		}
+		else {
+			seqSize++;
+		}
+	}
+}
+
+void ReadArr(double arr[], int arrSize) {
+	for (size_t i = 0; i < arrSize; i++)
+	{
+		std::cin >> arr[i];
+	}
+}

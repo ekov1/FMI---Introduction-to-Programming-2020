@@ -3,9 +3,14 @@
 
 #include <iostream>
 
+using std::cout;
 int main()
 {
-	std::cout << sizeof(char) << std::endl;
+	cout << '5' - '3'<<'\n';
+	cout << '5' << '\n';
+	cout << '5' + '5';
+
+	/*std::cout << sizeof(char) << std::endl;
 	std::cout << sizeof(int) << std::endl;
 	std::cout << sizeof(long) << std::endl;
 	std::cout << sizeof(unsigned char) << std::endl;
@@ -23,7 +28,7 @@ int main()
 	{
 		std::cout << (b & 1);
 		b = b >> 1;
-	}
+	}*/
 
 }
 

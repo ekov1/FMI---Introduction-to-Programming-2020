@@ -1,5 +1,9 @@
 #include <iostream>
 
+using std::endl;
+using std::cout;
+using std::cin;
+
 // global stuff N shit
 unsigned const MAX_COLS = 20;
 unsigned const MAX_ROWS = 40;
@@ -7,25 +11,34 @@ unsigned const PLAYER_ONE_DISC = 1;
 unsigned const PLAYER_TWO_DISC = 2;
 
 int gameBoard[MAX_ROWS][MAX_COLS];
+int gameBoardEmptySpaces;
 
 int gameBoardCols = 0;
 int gameBoardRows = 0;
 
-void InitializeGameBoard();
+bool InitializeGameBoard();
 void PrintBoard(int board[][MAX_COLS]);
-bool DropDisc(int playerDisc, int col);
+int DropDisc(int playerDisc, int col);
 bool IsGameOver(int row, int col);
 void RunGame();
 void WritePlayerName(bool playerOneTurn);
 
 int main()
 {
-	RunGame();
+	bool gameboardinitialized = InitializeGameBoard();
+	if (gameboardinitialized)
+	{
+		RunGame();
+	}
+	else {
+		cout << "Invalid input! Thank you come agin!" << endl;
+	}
+
 }
 
 // so called ENGINE
 void RunGame() {
-	InitializeGameBoard();
+
 	bool playerOneTurn = 1;
 	int rowIndex = -1;
 	int playerMove;
@@ -34,9 +47,9 @@ void RunGame() {
 	while (true)
 	{
 		WritePlayerName(playerOneTurn);
-		std::cout << "Enter col: ";
-		std::cin >> playerMove;
-
+		cout << "Enter col: ";
+		cin >> playerMove; // col in which player drops disc
+		system("cls");
 		// reduce player col by 1 because game board arr starts from 0
 		playerMove--;
 
@@ -51,13 +64,26 @@ void RunGame() {
 
 		PrintBoard(gameBoard);
 
-		if (rowIndex)
+		if (rowIndex != -1)
 		{
-			if (IsGameOver(playerMove, rowIndex))
+			// check if game can continiue
+			if (gameBoardEmptySpaces == 0)
+			{
+				cout << "No more spaces, nobody Wins!!!" << endl;
+				cout << "GAME OVER!!!";
+				cout << endl;
+
+				break;
+			}
+
+			bool isGameOver = IsGameOver(rowIndex, playerMove);
+			if (isGameOver)
 			{
 				WritePlayerName(playerOneTurn);
-				std::cout << "Wins!!!";
-				std::cout << "Other player is a little girl! HAHA!";
+				cout << "Wins!!!" << endl;;
+				cout << "Other player is a little girl! HAHA!";
+				cout << endl;
+
 				break;
 			}
 
@@ -67,154 +93,370 @@ void RunGame() {
 }
 
 void WritePlayerName(bool playerOneTurn) {
-	std::cout << "Player ";
+	cout << "Player ";
 	if (playerOneTurn)
 	{
-		std::cout << "One";
+		cout << "One";
 	}
 	else
 	{
-		std::cout << "Two";
+		cout << "Two";
 	}
-	std::cout << std::endl;
+	cout << " ";
 }
 
 // Checks if GameOver condition is true
 bool IsGameOver(int row, int col) {
-	//check diagonals
+	bool isGameOver = 0;
 
-	return true;
-}
-
-// checks is disc is at the end of the winning row
-void CheckIfEndOFRow(int row, int col) {
-	int counter = 1;
+	int winCounter = 1;
 	int playerToken = gameBoard[row][col];
-	int nextPosRow, nextPosCol;
-	int currentPosRow, currentPosCol;
 
-	//up-right
-	currentPosRow = row;
-	currentPosCol = col;
-	while (true)
+	int PRow = row;
+	int PCol = col;
+
+	int checkCounter = 0;
+
+	while (checkCounter < 7)
 	{
-		nextPosCol = currentPosCol++;
-		nextPosRow = currentPosRow--;
-
-		if (nextPosCol > gameBoardCols - 1 || nextPosRow <= 0)
-		{
-			break;
-		}
-
-		if (gameBoard[nextPosRow][nextPosCol] == playerToken) {
-			counter++;
-			if (counter == 4)
+		//go up right
+		while (true) {
+			// are we out?
+			if ((PRow - 1 < 0) || (PCol + 1 == gameBoardCols))
 			{
 				break;
 			}
-		}
-		else {
-			break;
-		}
+			else {
+				PRow--;
+				PCol++;
 
-		currentPosCol = nextPosCol;
-		currentPosRow = nextPosRow;
-	}
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
 
-	// right
-	if (counter != 4)
-	{
-		currentPosRow = row;
-		currentPosCol = col;
-		counter = 1;
-		nextPosRow = currentPosRow;
+				winCounter++;
 
-		while (true)
-		{
-			nextPosCol = currentPosCol++;
-
-			if (nextPosCol > gameBoardCols - 1)
-			{
-				break;
-			}
-
-			if (gameBoard[nextPosRow][nextPosCol] == playerToken) {
-				counter++;
-				if (counter == 4)
+				if (winCounter == 4)
 				{
 					break;
 				}
 			}
-			else {
+
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		// go down left
+		PRow = row;
+		PCol = col;
+		while (true)
+		{
+			// are we out?
+			if ((PRow + 1 == gameBoardRows) || (PCol - 1 < 0))
+			{
 				break;
 			}
+			else {
+				PRow++;
+				PCol--;
 
-			currentPosCol = nextPosCol;
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
 		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		// go right
+		PRow = row;
+		PCol = col;
+		winCounter = 1;
+
+		while (true)
+		{
+			// are we out?
+			if (PCol + 1 == gameBoardCols)
+			{
+				break;
+			}
+			else {
+				PCol++;
+
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		// go left
+		PRow = row;
+		PCol = col;
+
+		while (true)
+		{
+			// are we out?
+			if (PCol - 1 < 0)
+			{
+				break;
+			}
+			else {
+				PCol--;
+
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		//go down right
+		PRow = row;
+		PCol = col;
+		winCounter = 1;
+		while (true) {
+			// are we out?
+			if ((PRow + 1 == gameBoardRows) || (PCol + 1 == gameBoardCols))
+			{
+				break;
+			}
+			else {
+				PRow++;
+				PCol++;
+
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		// go up left
+		PRow = row;
+		PCol = col;
+		while (true)
+		{
+			// are we out?
+			if ((PRow - 1 < 0) || (PCol - 1 < 0))
+			{
+				break;
+			}
+			else {
+				PRow--;
+				PCol--;
+
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
+
+		// go down
+		PRow = row;
+		PCol = col;
+		winCounter = 1;
+		while (true) {
+			// are we out?
+			if (PRow + 1 == gameBoardRows)
+			{
+				break;
+			}
+			else {
+				PRow++;
+
+				if (gameBoard[PRow][PCol] != playerToken)
+				{
+					break;
+				}
+
+				winCounter++;
+
+				if (winCounter == 4)
+				{
+					break;
+				}
+			}
+		}
+
+		// win ckeck
+		if (winCounter == 4)
+		{
+			break;
+		}
+		checkCounter++;
 	}
+
+	if (winCounter == 4)
+	{
+		isGameOver = 1;
+	}
+
+	return isGameOver;
 }
 
 // Drops disc for input player
 // if move is valid returns col index
 // if move is invalid(coll is full or invalid) returns -1
-bool DropDisc(int playerDisc, int col) {
-	if (col < 0 || col >gameBoardCols)
-	{
-
-	}
+int DropDisc(int playerDisc, int col) {
 	int rowIndex;
-	for (size_t row = 0; row < gameBoardRows; row++)
+	if (col < 0 || gameBoardCols < col)
 	{
-		if (gameBoard[row][col])
+		cout << "Invalid move" << endl;;
+		rowIndex = -1;
+	}
+	else {
+		for (int row = 0; row < gameBoardRows; row++)
 		{
-			if (row == 0)
+			if (gameBoard[row][col])
 			{
-				std::cout << "Invalid move";
-				rowIndex = -1;
+				if (row == 0)
+				{
+					cout << "Invalid move" << endl;
+					rowIndex = -1;
+				}
+				else {
+					rowIndex = row - 1;
+					gameBoard[rowIndex][col] = playerDisc;
+				}
+				break;
 			}
-			else {
-				rowIndex = row + 1;
+
+			if (row == gameBoardRows - 1)
+			{
+				rowIndex = row;
 				gameBoard[rowIndex][col] = playerDisc;
 			}
-			break;
 		}
+	}
+
+	if (rowIndex != -1)
+	{
+		gameBoardEmptySpaces--;
 	}
 	return rowIndex;
 }
 
 // Initializes Game Board before start of the game
-void InitializeGameBoard() {
-	std::cout << "Enter board width :";
-	std::cin >> gameBoardRows;
-	std::cout << "Enter board height :";
-	std::cin >> gameBoardCols;
+bool InitializeGameBoard() {
+	bool result = 1;
+	cout << "Enter board width :";
+	cin >> gameBoardCols;
+	cout << "Enter board height :";
+	cin >> gameBoardRows;
 
-	for (size_t row = 0; row < gameBoardRows; row++)
+	if (gameBoardCols < 4 && gameBoardRows < 4)
 	{
-		for (size_t col = 0; col < gameBoardCols; col++)
+		result = 0;
+	}
+
+	if (result) {
+		gameBoardEmptySpaces = gameBoardRows * gameBoardCols;
+		for (int row = 0; row < gameBoardRows; row++)
 		{
-			gameBoard[row][col];
+			for (int col = 0; col < gameBoardCols; col++)
+			{
+				gameBoard[row][col];
+			}
 		}
 	}
+
+	return result;
 }
 
 void PrintBoard(int board[][MAX_COLS]) {
-	for (size_t i = 0; i < gameBoardRows; i++)
+	for (int i = 0; i < gameBoardRows; i++)
 	{
-		for (size_t j = 0; j < gameBoardCols; j++)
+		for (int j = 0; j < gameBoardCols; j++)
 		{
-			std::cout << "|";
+			cout << "|";
 			if (board[i][j] == 1)
 			{
-				std::cout << "X";
+				cout << "X";
 			}
 			else if (board[i][j] == 2) {
-				std::cout << "O";
+				cout << "O";
 			}
 			else {
-				std::cout << " ";
+				cout << " ";
 			}
 		}
-		std::cout << "|" << std::endl;
+		cout << "|" << std::endl;
 	}
 }

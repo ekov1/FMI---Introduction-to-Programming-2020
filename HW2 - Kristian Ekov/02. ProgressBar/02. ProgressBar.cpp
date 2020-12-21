@@ -2,91 +2,218 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <string>
 
-const int BAR_LENGTH_MIN = 1;
-const int BAR_LENGTH_MAX = 100;
+using std::cout;
+using std::cin;
+using std::endl;
+using std::this_thread::sleep_for;
+using std::chrono::milliseconds;
 
-const std::string ERROR_MSG_WRONG_INPUT = "Wrong Input.";
-const std::string ERROR_MSG_BAR_LENGTH = " Bar length must be between 1 and. 100.";
+const unsigned BAR_LENGTH_MIN = 1;
+const unsigned BAR_LENGTH_MAX = 100;
+const unsigned CURRENT_PROGRESS_MIN = 0;
+const unsigned CURRENT_PROGRESS_MAX = 1;
+
+//" Current Progress must be from 0 to 1.";
 
 float currentProgress;
-unsigned barlenght;
+unsigned barLenght;
 char endSymbolLeft, endSymbolRight;
 bool showPercentSybolInBar = 0;
 char filledSpaceSymbol, emptySpaceSymbol;
-int wholePartsOfProgressBar;
+unsigned wholePartsOfProgressBar;
+float onePartOfBarInPercent;
+float onePartOfBar;
+unsigned partsWriten = 0;
+unsigned millisecondsBreak;
 
 bool InitializeBar();
 void RunBar();
-bool ValidateValueInInterval(int value, int start, int end, std::string message);
+void UpdateBar(unsigned currentProgress);
 
-int main()
+unsigned main()
 {
 	bool initialized = 0;
 	initialized = InitializeBar();
-
-	if (initialized)
+	if (initialized) {
+		system("cls");
 		RunBar();
-	else
-	{
-		std::cout << "Initialization failed. Tyr again 1 exit 0;"
-
 	}
+
 }
 
 void RunBar() {
-	std::cout << endSymbolLeft;
-	for (size_t i = 0; i < barlenght; i++)
+	for (size_t i = 0; i <= currentProgress; i++)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		std::cout << filledSpaceSymbol;
+		UpdateBar(i);
+		sleep_for(milliseconds(millisecondsBreak));
+		if (i < currentProgress)
+		{
+			system("cls");
+		}
 	}
-	std::cout << endSymbolRight;
+	cout << endl;
+}
+
+void UpdateBar(unsigned currentProgress) {
+	unsigned stepsToAdd = currentProgress / onePartOfBarInPercent;
+	unsigned counter = 0;
+
+	cout << endSymbolLeft;
+
+	for (unsigned i = 0; i < stepsToAdd; i++)
+	{
+		for (size_t i = 0; i < onePartOfBar; i++)
+		{
+			if (showPercentSybolInBar)
+			{
+
+				if (currentProgress == 100 && counter == barLenght - 4)
+				{
+					break;
+				}
+				if (currentProgress == 99 && counter == barLenght - 3)
+				{
+					break;
+				}
+				if (currentProgress == 98 && counter == barLenght - 2)
+				{
+					break;
+				}
+			}
+			else {
+				if (currentProgress == 100 && counter == barLenght - 3)
+				{
+					break;
+				}
+				if (currentProgress == 99 && counter == barLenght - 2)
+				{
+					break;
+				}
+				if (currentProgress == 98 && counter == barLenght - 1)
+				{
+					break;
+				}
+			}
+
+			cout << filledSpaceSymbol;
+			counter++;
+		}
+	}
+
+	if (stepsToAdd > partsWriten)
+	{
+		partsWriten = stepsToAdd;
+	}
+
+	cout << currentProgress;
+
+	if (currentProgress < 10)
+	{
+		counter += 1;
+	}
+	else if (10 < currentProgress && currentProgress < 100) {
+		counter += 2;
+	}
+	else if (currentProgress == 100) {
+		counter += 3;
+	}
+
+	if (showPercentSybolInBar)
+	{
+		cout << '%';
+		counter++;
+	}
+
+	while (counter < barLenght)
+	{
+		cout << emptySpaceSymbol;
+		counter++;
+	}
+
+	cout << endSymbolRight;
 }
 
 bool InitializeBar() {
 	bool result = 1;
 
-	std::cout << "Enter current progrress value: ";
-	std::cin >> currentProgress;
-
+	cout << "Enter current progrress value: ";
+	cin >> currentProgress;
+	if (currentProgress < 0 || 1 < currentProgress)
+	{
+		cout << "error! currentProgress must be in [0,1]";
+		result = 0;
+	}
 
 	if (result)
 	{
-		std::cout << "Enter progrress length: ";
-		std::cin >> barlenght;
-		result = ValidateValueInInterval(barlenght, BAR_LENGTH_MIN, BAR_LENGTH_MAX, );
+		cout << "Enter bar length: ";
+		cin >> barLenght;
+		if (barLenght < 1)
+		{
+			cout << "error! bar length must be >= 1";
+			result = 0;
+		}
 	}
 
-
-	std::cout << "Enter end Symbol Left: ";
-	std::cin >> endSymbolLeft;
-
-	std::cout << "Enter end Symbol Right: ";
-	std::cin >> endSymbolRight;
-
-	std::cout << "Do you want to show percent symbol in bar? (1/0 = y/n)";
-	std::cin >> endSymbolRight;
-
-	std::cout << "Enter filled Space char:";
-	std::cin >> filledSpaceSymbol;
-
-	std::cout << "Enter empty Space char:";
-	std::cin >> emptySpaceSymbol;
-
-	std::cout << "Enter whole Parts value Of Progress Bar:";
-	std::cin >> wholePartsOfProgressBar;
-}
-
-
-bool ValidateValueInInterval(int value, int start, int end, std::string message) {
-	bool result = 1;
-	if (value < start || end < value)
+	if (result)
 	{
-		std::cout << message;
-		result = 0;
+		cout << "Enter end Symbol Left: ";
+		cin >> endSymbolLeft;
 	}
+	if (result)
+	{
+		cout << "Enter end Symbol Right: ";
+		cin >> endSymbolRight;
+	}
+	if (result)
+	{
+		cout << "Do you want to show percent symbol in bar? (1/0 = y/n): ";
+		cin >> showPercentSybolInBar;
+	}
+	if (result)
+	{
+		cout << "Enter filled Space char: ";
+		cin >> filledSpaceSymbol;
+	}
+
+	if (result)
+	{
+		cout << "Enter empty Space char: ";
+		cin >> emptySpaceSymbol;
+	}
+
+	if (result) {
+		cout << "Enter whole Parts Of Progress Bar: ";
+		cin >> wholePartsOfProgressBar;
+		if (wholePartsOfProgressBar < 0 || barLenght < wholePartsOfProgressBar)
+		{
+			cout << "whole Parts Of Progress Bar must be in [1,barlenght] = " << barLenght;
+			result = 0;
+		}
+	}
+	int sec;
+	if (result)
+	{
+		cout << "Enter loading time interval in seconds:";
+		cin >> sec;
+		if (sec < 0)
+		{
+			cout << "sec must be > 0 ";
+			result = 0;
+		}
+	}
+
+	cout << endl;
+
+	if (result)
+	{
+		currentProgress *= 100;
+		onePartOfBar = barLenght / wholePartsOfProgressBar;
+		onePartOfBarInPercent = (onePartOfBar / barLenght) * 100;
+		millisecondsBreak = (sec * 1000) / currentProgress;
+	}
+
 	return result;
 }
 

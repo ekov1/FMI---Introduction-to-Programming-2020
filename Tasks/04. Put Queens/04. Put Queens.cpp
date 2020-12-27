@@ -8,16 +8,14 @@ int board[BOARD_SIZE][BOARD_SIZE];
 
 void InitializeBoard();
 void PrintBoard();
-bool PutQueens(int n);
+bool PutQueens(int n, bool havePutAllQueens = 0);
 bool PutQueen(int n);
 
 int main()
 {
 	InitializeBoard();
 	PrintBoard();
-	PutQueens(BOARD_SIZE);
-	PrintBoard();
-
+	cout << "have put all queens = " << (PutQueens(BOARD_SIZE) ? "True" : "False");
 }
 
 void InitializeBoard() {
@@ -42,15 +40,15 @@ void PrintBoard() {
 }
 
 // n quens to put
-bool PutQueens(int n) {
-	bool havePutAllQueens;
-	for (size_t i = 1; i <= n; i++)
+bool PutQueens(int n, bool havePutAllQueens) {
+	for (size_t i = 0; i < BOARD_SIZE; i++)
 	{
-		havePutAllQueens = PutQueen(i);
-		PrintBoard();
-
+		for (size_t j = 0; j < BOARD_SIZE; j++)
+		{
+			cout << board[i][j];
+		}
+		cout << endl;
 	}
-	return havePutAllQueens;
 }
 
 // n number of queen
@@ -60,6 +58,7 @@ bool PutQueen(int n) {
 	int freeIndexCol;
 
 	// look for free space
+	bool breakFlag = 0;
 	for (size_t i = 0; i < BOARD_SIZE; i++)
 	{
 		for (size_t j = 0; j < BOARD_SIZE; j++)
@@ -69,17 +68,23 @@ bool PutQueen(int n) {
 				canPut = 1;
 				freeIndexRow = i;
 				freeIndexCol = j;
+				breakFlag = 1;
 				break;
 			}
 		}
+		if (breakFlag)
+		{
+			break;
+		}
 	}
-
-	int Row = freeIndexRow;
-	int Col = freeIndexCol;
 
 	// if freespace put queen
 	if (canPut)
 	{
+		int Row = freeIndexRow;
+		int Col = freeIndexCol;
+		board[Row][Col] = n;
+
 		// up
 		while (true)
 		{
@@ -99,6 +104,47 @@ bool PutQueen(int n) {
 			{
 				break;
 			}
+			Row++;
+			board[Row][Col] = n;
+		}
+
+		// right
+		Row = freeIndexRow;
+
+		while (true)
+		{
+			if (Col + 1 == BOARD_SIZE)
+			{
+				break;
+			}
+			Col++;
+			board[Row][Col] = n;
+		}
+
+		// left
+		Col = freeIndexCol;
+
+		while (true)
+		{
+			if (Col - 1 < 0)
+			{
+				break;
+			}
+			Col--;
+			board[Row][Col] = n;
+		}
+
+		// main diagonal down left
+		Row = freeIndexRow;
+		Col = freeIndexCol;
+
+		while (true)
+		{
+			if (Col + 1 == BOARD_SIZE || Row + 1 == BOARD_SIZE)
+			{
+				break;
+			}
+			Col++;
 			Row++;
 			board[Row][Col] = n;
 		}

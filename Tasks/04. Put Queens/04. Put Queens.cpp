@@ -5,17 +5,21 @@ using std::endl;
 
 int const BOARD_SIZE = 8;
 int board[BOARD_SIZE][BOARD_SIZE];
+int boardQueens[BOARD_SIZE][BOARD_SIZE];
+
+int counter = 0;
 
 void InitializeBoard();
-void PrintBoard();
-bool PutQueens(int n, bool havePutAllQueens = 0);
-bool PutQueen(int n);
+void PrintBoard(int board[][BOARD_SIZE]);
+bool PutQueens(int n, int numOfQueensOnBoard = 0, bool havePutAllQueens = 0);
+void PutQueen(int queenToken, int freeIndexRow, int freeIndexCol);
+void CleanTry(int n);
 
 int main()
 {
 	InitializeBoard();
-	PrintBoard();
 	cout << "have put all queens = " << (PutQueens(BOARD_SIZE) ? "True" : "False");
+	cout << counter;
 }
 
 void InitializeBoard() {
@@ -28,7 +32,7 @@ void InitializeBoard() {
 	}
 }
 
-void PrintBoard() {
+void PrintBoard(int board[][BOARD_SIZE]) {
 	for (size_t i = 0; i < BOARD_SIZE; i++)
 	{
 		for (size_t j = 0; j < BOARD_SIZE; j++)
@@ -37,25 +41,17 @@ void PrintBoard() {
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
 
 // n quens to put
-bool PutQueens(int n, bool havePutAllQueens) {
-	for (size_t i = 0; i < BOARD_SIZE; i++)
-	{
-		for (size_t j = 0; j < BOARD_SIZE; j++)
-		{
-			cout << board[i][j];
-		}
-		cout << endl;
-	}
-}
+bool PutQueens(int n, int numOfQueensOnBoard, bool havePutAllQueens) {
+	
 
-// n number of queen
-bool PutQueen(int n) {
-	bool canPut = 0;
-	int freeIndexRow;
-	int freeIndexCol;
+	if (n == numOfQueensOnBoard)
+	{
+		return true;
+	}
 
 	// look for free space
 	bool breakFlag = 0;
@@ -65,90 +61,182 @@ bool PutQueen(int n) {
 		{
 			if (board[i][j] == 0)
 			{
-				canPut = 1;
-				freeIndexRow = i;
-				freeIndexCol = j;
-				breakFlag = 1;
-				break;
+				int queenToken = numOfQueensOnBoard + 1;
+				PutQueen(queenToken, i, j);
+				numOfQueensOnBoard += 1;
+				havePutAllQueens = PutQueens(n, numOfQueensOnBoard, havePutAllQueens);
+
+				if (havePutAllQueens)
+				{
+					/*PrintBoard(board);
+					PrintBoard(boardQueens);*/
+					counter++;
+				}
+
+				// clean try
+				CleanTry(queenToken);
+				numOfQueensOnBoard -= 1;
+				havePutAllQueens = false;
 			}
 		}
-		if (breakFlag)
+	}
+
+	return havePutAllQueens;
+}
+
+void CleanTry(int token) {
+	for (size_t i = 0; i < BOARD_SIZE; i++)
+	{
+		for (size_t j = 0; j < BOARD_SIZE; j++)
+		{
+			if (board[i][j] == token)
+			{
+				board[i][j] = 0;
+			}
+			if (boardQueens[i][j] == token)
+			{
+				boardQueens[i][j] = 0;
+			}
+		}
+	}
+}
+
+// n number of queen
+void PutQueen(int queenToken, int freeIndexRow, int freeIndexCol) {
+	int Row = freeIndexRow;
+	int Col = freeIndexCol;
+	board[Row][Col] = queenToken;
+	boardQueens[Row][Col] = queenToken;
+
+	// up
+	while (true)
+	{
+		if (Row - 1 < 0)
 		{
 			break;
 		}
+		Row--;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
 	}
 
-	// if freespace put queen
-	if (canPut)
+	Row = freeIndexRow;
+	// down
+	while (true)
 	{
-		int Row = freeIndexRow;
-		int Col = freeIndexCol;
-		board[Row][Col] = n;
-
-		// up
-		while (true)
+		if (Row + 1 == BOARD_SIZE)
 		{
-			if (Row - 1 < 0)
-			{
-				break;
-			}
-			Row--;
-			board[Row][Col] = n;
+			break;
 		}
-
-		Row = freeIndexRow;
-		// down
-		while (true)
+		Row++;
+		if (board[Row][Col] == 0)
 		{
-			if (Row + 1 == BOARD_SIZE)
-			{
-				break;
-			}
-			Row++;
-			board[Row][Col] = n;
-		}
-
-		// right
-		Row = freeIndexRow;
-
-		while (true)
-		{
-			if (Col + 1 == BOARD_SIZE)
-			{
-				break;
-			}
-			Col++;
-			board[Row][Col] = n;
-		}
-
-		// left
-		Col = freeIndexCol;
-
-		while (true)
-		{
-			if (Col - 1 < 0)
-			{
-				break;
-			}
-			Col--;
-			board[Row][Col] = n;
-		}
-
-		// main diagonal down left
-		Row = freeIndexRow;
-		Col = freeIndexCol;
-
-		while (true)
-		{
-			if (Col + 1 == BOARD_SIZE || Row + 1 == BOARD_SIZE)
-			{
-				break;
-			}
-			Col++;
-			Row++;
-			board[Row][Col] = n;
+			board[Row][Col] = queenToken;
 		}
 	}
 
-	return canPut;
+	// right
+	Row = freeIndexRow;
+
+	while (true)
+	{
+		if (Col + 1 == BOARD_SIZE)
+		{
+			break;
+		}
+		Col++;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
+
+	// left
+	Col = freeIndexCol;
+
+	while (true)
+	{
+		if (Col - 1 < 0)
+		{
+			break;
+		}
+		Col--;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
+
+	// main diagonal down right
+	Row = freeIndexRow;
+	Col = freeIndexCol;
+
+	while (true)
+	{
+		if (Col + 1 == BOARD_SIZE || Row + 1 == BOARD_SIZE)
+		{
+			break;
+		}
+		Col++;
+		Row++;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
+
+	// main diagonal up left
+	Row = freeIndexRow;
+	Col = freeIndexCol;
+	while (true)
+	{
+		if (Col - 1 < 0 || Row - 1 < 0)
+		{
+			break;
+		}
+		Col--;
+		Row--;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
+
+	// secodary diagonal up right
+	Row = freeIndexRow;
+	Col = freeIndexCol;
+
+	while (true)
+	{
+		if (Col + 1 == BOARD_SIZE || Row - 1 < 0)
+		{
+			break;
+		}
+		Col++;
+		Row--;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
+
+	// secodary diagonal down left
+	Row = freeIndexRow;
+	Col = freeIndexCol;
+
+	while (true)
+	{
+		if (Col - 1 < 0|| Row + 1 == BOARD_SIZE)
+		{
+			break;
+		}
+		Col--;
+		Row++;
+		if (board[Row][Col] == 0)
+		{
+			board[Row][Col] = queenToken;
+		}
+	}
 }

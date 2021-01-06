@@ -8,24 +8,20 @@
 // pop_back ->     9 11 42 12
 
 #include <iostream>
-#include <ctime>
-#include <cstdlib>
 
 using std::nothrow;
 using std::cout;
 using std::endl;
 
-bool ArrayPushBack(int*& array, size_t& size, int element);
-int ArrayPopBack(int*& array, size_t& size);
-bool ArrayResize(int*& array, size_t oldSize, size_t newSize);
+bool ArrayPushBack(int*& array, unsigned& size, int element);
+int ArrayPopBack(int*& array, unsigned& size);
+bool ArrayResize(int*& array, unsigned oldSize, unsigned newSize);
 void GenerateArray(int* array, unsigned size, int max = RAND_MAX);
-void PrintArray(int array[], size_t size);
-
-
+void PrintArray(int array[], unsigned size);
 
 int main()
 {
-	size_t size = 5;
+	unsigned size = 5;
 	// allocate memory
 	int* arr = new int[size];
 
@@ -36,9 +32,11 @@ int main()
 	ArrayPopBack(arr, size);
 	PrintArray(arr, size);
 
+	delete[] arr;
+	return 0;
 }
 
-bool ArrayPushBack(int*& array, size_t& size, int element) {
+bool ArrayPushBack(int*& array, unsigned& size, int element) {
 	bool result = ArrayResize(array, size, size + 1);
 	if (result)
 	{
@@ -48,7 +46,7 @@ bool ArrayPushBack(int*& array, size_t& size, int element) {
 	return result;
 }
 
-int ArrayPopBack(int*& array, size_t& size) {
+int ArrayPopBack(int*& array, unsigned& size) {
 	int lastElement;
 	bool result;
 
@@ -65,16 +63,16 @@ int ArrayPopBack(int*& array, size_t& size) {
 	}
 }
 
-bool ArrayResize(int*& array, size_t oldSize, size_t newSize) {
+bool ArrayResize(int*& array, unsigned oldSize, unsigned newSize) {
 	int* tempArray = new(nothrow) int[newSize];
 	if (tempArray == nullptr)
 	{
 		return false;
 	}
 
-	size_t size = oldSize < newSize ? oldSize : newSize;
+	unsigned size = oldSize < newSize ? oldSize : newSize;
 
-	for (size_t i = 0; i < size; i++)
+	for (unsigned i = 0; i < size; i++)
 	{
 		tempArray[i] = array[i];
 	}
@@ -96,11 +94,10 @@ void GenerateArray(int* array, unsigned size, int max)
 	for (unsigned i = 0; i < size; ++i) {
 		array[i] = rand() % max + 0;
 	}
-
 }
 
-void PrintArray(int array[], size_t size) {
-	for (size_t i = 0; i < size; i++)
+void PrintArray(int array[], unsigned size) {
+	for (unsigned i = 0; i < size; i++)
 	{
 		cout << array[i] << " ";
 	}

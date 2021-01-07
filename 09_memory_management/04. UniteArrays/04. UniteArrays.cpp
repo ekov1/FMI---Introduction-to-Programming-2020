@@ -22,11 +22,15 @@ int main()
 	unsigned sizeArr2 = 4;
 	unsigned* arr2 = new unsigned [] {2, 7, 12, 32};
 	unsigned sizeUnited = 0;
-	unsigned* arrUnited= new unsigned[sizeUnited] ;
+	unsigned* arrUnited = new unsigned[sizeUnited];
 	PrintArray(arr1, sizeArr1);
 	PrintArray(arr2, sizeArr2);
 	UniteSortedArrays(arr1, arr2, arrUnited, sizeArr1, sizeArr2, sizeUnited);
 	PrintArray(arrUnited, sizeUnited);
+
+	delete[] arr1;
+	delete[] arr2;
+	delete[] arrUnited;
 
 }
 

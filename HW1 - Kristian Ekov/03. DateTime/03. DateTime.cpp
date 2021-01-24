@@ -219,7 +219,7 @@ int main()
 		return 0;
 	}
 
-	//cout << d << "." << m << "." << y << " " << h << ":" << min << ":" << s;
+	// cout << d << "." << m << "." << y << " " << h << ":" << min << ":" << s;
 
 	int numLeapsDate1 = NumLeaps(year1);
 	int numLeapsDate2 = NumLeaps(year2);

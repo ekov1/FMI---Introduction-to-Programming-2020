@@ -7,7 +7,13 @@
 //Отпечатва тяхното средно аритметично.
 #include <iostream>
 
+using namespace std;
+
 int main()
 {
-    std::cout << "Hello World!\n";
+	int a, up, dis;
+	cin >> a >> up >> dis;
+
+	int avg = (a + up + dis) / 3;
+	cout << avg;
 }

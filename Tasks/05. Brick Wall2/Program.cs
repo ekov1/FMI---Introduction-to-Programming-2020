@@ -80,10 +80,10 @@ namespace _05.Brick_Wall2
             {
                 foreach (var brick in briks)
                 {
-                    if (brik != firstLayer[i,j] )
-                    {
+                    //if (brik != firstLayer[i,j] )
+                    //{
 
-                    }
+                    //}
                 }
             }
             return result;
